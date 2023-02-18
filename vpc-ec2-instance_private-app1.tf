@@ -1,9 +1,9 @@
-module "ec2_instance_private" {
+module "ec2_instance_private_app1" {
     depends_on = [module.vpc]
     source  = "terraform-aws-modules/ec2-instance/aws"
     version = "~> 3.0"
     for_each = toset(["0", "1"])
-    name = "ec2_instance_private"
+    name = "ec2_instance_private_app1"
 
     ami                    = data.aws_ami.amzlinux2.id
     instance_type          = var.instance_type

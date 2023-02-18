@@ -9,17 +9,22 @@ module "alb" {
         module.vpc.public_subnets[0],
         module.vpc.public_subnets[1]
     ]
-    security_groups = [module.sg_elb.security_group_id]
-    http_tcp_listeners = [
-        {
-            port               = 80
-            protocol           = "HTTP"
-            target_group_index = 0
+    security_groups = [module.sg_elb.security_group_id] 
+    # HTTP Listener - HTTP to HTTPS Redirect
+    http_tcp_listeners = [{
+        port               = 80
+        protocol           = "HTTP"
+        action_type = "redirect"
+        redirect = {
+            port        = "443"
+            protocol    = "HTTPS"
+            status_code = "HTTP_301"
         }
-    ]
-    // target group
+    }] 
+    // target groups
     target_groups = [{
-        name_prefix      = "pref-"
+        //  targetgroup for app1
+        name_prefix      = "app1-"
         backend_protocol = "HTTP"
         backend_port     = 80
         target_type      = "instance"
@@ -36,10 +41,35 @@ module "alb" {
         }
         targets = {
             my_app1_vm1  = {
-                target_id = element([for instance in module.ec2_instance_private: instance.id],0)
+                target_id = element([for instance in module.ec2_instance_private_app1: instance.id],0)
                 port = 80 }
             my_app1_vm2 = {
-                target_id = element([for instance in module.ec2_instance_private: instance.id],1)
+                target_id = element([for instance in module.ec2_instance_private_app1: instance.id],1)
+                port = 80 }
+        }
+    },
+    {    // target group app2 
+        name_prefix      = "app2-"
+        backend_protocol = "HTTP"
+        backend_port     = 80
+        target_type      = "instance"
+        health_check = {
+            enabled             = true
+            interval            = 30
+            path                = "/app2/index.html"
+            port                = "traffic-port"
+            healthy_threshold   = 3
+            unhealthy_threshold = 3
+            timeout             = 6
+            protocol            = "HTTP"
+            matcher             = "200-399"
+        }
+        targets = {
+            my_app1_vm1  = {
+                target_id = element([for instance in module.ec2_instance_private_app2: instance.id],0)
+                port = 80 }
+            my_app1_vm2 = {
+                target_id = element([for instance in module.ec2_instance_private_app2: instance.id],1)
                 port = 80 }
         }
     }]
