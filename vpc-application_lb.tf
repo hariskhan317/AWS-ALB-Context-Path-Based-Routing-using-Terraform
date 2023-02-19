@@ -82,5 +82,6 @@ module "alb" {
             content_type = "text/plain"
             message_body = "Fixed message"
             status_code  = "200"
+        }
       }]
 }
