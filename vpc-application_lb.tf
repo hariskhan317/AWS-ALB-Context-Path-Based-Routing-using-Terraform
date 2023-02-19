@@ -83,5 +83,27 @@ module "alb" {
             message_body = "Fixed message"
             status_code  = "200"
         }
-      }]
+    }]
+    // https listner rule
+    https_listener_rules = [{
+        // https listner rule for app1
+        https_listener_index = 0
+        actions = [{
+            type               = "forward"
+            target_group_index = 0
+        }]
+        conditions = [{
+            path_patterns = ["/app1*"]
+        }]
+    },{
+        // https listner rule for app2
+        https_listener_index = 1
+        actions = [{
+            type               = "forward"
+            target_group_index = 1
+        }]
+        conditions = [{
+            path_patterns = ["/app2*"]
+        }]
+    }]
 }
