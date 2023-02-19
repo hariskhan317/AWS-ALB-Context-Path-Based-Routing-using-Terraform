@@ -47,8 +47,7 @@ module "alb" {
                 target_id = element([for instance in module.ec2_instance_private_app1: instance.id],1)
                 port = 80 }
         }
-    },
-    {    // target group app2 
+    },{    // target group app2 
         name_prefix      = "app2-"
         backend_protocol = "HTTP"
         backend_port     = 80
@@ -73,4 +72,15 @@ module "alb" {
                 port = 80 }
         }
     }]
+
+    # HTTPS Listener
+    https_listeners = [{
+        port               = 443
+        protocol           = "HTTPS"
+        certificate_arn    = module.acm.acm_certificate_arn
+            fixed_response = {
+            content_type = "text/plain"
+            message_body = "Fixed message"
+            status_code  = "200"
+      }]
 }
