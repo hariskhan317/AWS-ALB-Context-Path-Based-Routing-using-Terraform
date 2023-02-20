@@ -1,6 +1,6 @@
 resource "aws_route53_record" "app_dns" {
     zone_id = data.aws_route53_zone.mydomain.zone_id
-    name    = "www.example.com"
+    name    = "app.mydevopsample.com"
     type    = "A"
     alias {
         name                   = module.alb.lb_dns_name

@@ -97,7 +97,7 @@ module "alb" {
         }]
     },{
         // https listner rule for app2
-        https_listener_index = 1
+        https_listener_index = 0
         actions = [{
             type               = "forward"
             target_group_index = 1
